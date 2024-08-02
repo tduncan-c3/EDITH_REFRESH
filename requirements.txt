@@ -1,1 +1,10 @@
 fdk
+flask
+cv2
+face_recognition
+urllib.request
+numpy
+requests
+base64
+PIL
+io
