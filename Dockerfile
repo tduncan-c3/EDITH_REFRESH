@@ -1,17 +1,19 @@
-# Use an official Python runtime as a parent image
-FROM fnproject/python:3.8
-
-# Set the working directory in the container
+FROM fnproject/python:3.11-dev as build-stage
 WORKDIR /function
+ADD requirements.txt /function/
 
-# Copy the current directory contents into the container at /function
-COPY . /function
+			RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt &&\
+			    rm -fr ~/.cache/pip /tmp* requirements.txt func.yaml Dockerfile .venv &&\
+			    chmod -R o+r /python
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Install the necessary OpenGL and GLib libraries
 RUN apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0
 
-# Command to run the function
-CMD ["python", "func.py"]
+ADD . /function/
+RUN rm -fr /function/.pip_cache
+FROM fnproject/python:3.11
+WORKDIR /function
+COPY --from=build-stage /python /python
+COPY --from=build-stage /function /function
+RUN chmod -R o+r /function
+ENV PYTHONPATH=/function:/python
+ENTRYPOINT ["/python/bin/fdk", "/function/func.py", "handler"]
