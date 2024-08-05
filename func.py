@@ -10,6 +10,8 @@ import json
 
 from fdk import response
 
+import requests
+bucket_url = 'https://objectstorage.us-chicago-1.oraclecloud.com/p/j8d1ZFSVLZnXbJM07BW4ogJg-TEyu9uwb0or5vGoBPSRgDbyI2aj7lMynpBZ5rMw/n/axnwnsavbb9n/b/vision_service/o/'
 
 def handler(ctx, data: io.BytesIO=None):
     print("Entering Python Hello World handler", flush=True)
@@ -19,6 +21,26 @@ def handler(ctx, data: io.BytesIO=None):
         name = body.get("name")
     except (Exception, ValueError) as ex:
         print(str(ex), flush=True)
+
+    try:
+        r = requests.get(bucket_url)
+        objects = r.json()['objects']
+    except Exception as requestError:
+        return response.Response(
+            ctx, response_data=json.dumps(
+                {"RequestError": str(requestError)}),
+            headers={"Content-Type": "application/json"}
+        )
+
+    for object in objects:
+        try:
+            name = bucket_url + object['name'].replace(' ', '%20')
+        except Exception as e:
+            return response.Response(
+                ctx, response_data=json.dumps(
+                    {"EncodingError": str(e)}),
+                headers={"Content-Type": "application/json"}
+            )
 
     print("Vale of name = ", name, flush=True)
     print("Exiting Python Hello World handler", flush=True)
@@ -47,21 +69,6 @@ def handler(ctx, data: io.BytesIO=None):
 # # bucket_url = 'https://objectstorage.us-chicago-1.oraclecloud.com/p/j8d1ZFSVLZnXbJM07BW4ogJg-TEyu9uwb0or5vGoBPSRgDbyI2aj7lMynpBZ5rMw/n/axnwnsavbb9n/b/vision_service/o/'
 
 # def handler(ctx, data: io.BytesIO=None):  
-#     print("Entering Python Hello World handler", flush=True)
-#     name = "World"
-#     try:
-#         body = json.loads(data.getvalue())
-#         name = body.get("name")
-#     except (Exception, ValueError) as ex:
-#         print(str(ex), flush=True)
-
-#     print("Vale of name = ", name, flush=True)
-#     print("Exiting Python Hello World handler", flush=True)
-#     return response.Response(
-#         ctx, response_data=json.dumps(
-#             {"message": "Hello {0}".format(name)}),
-#         headers={"Content-Type": "application/json"}
-#     )
 #     # try:
 #     #     try:
 #     #         r = requests.get(bucket_url)
