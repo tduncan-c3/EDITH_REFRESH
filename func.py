@@ -11,7 +11,7 @@ import json
 from fdk import response
 
 import cv2
-import face_recognition
+# import face_recognition
 import requests
 import urllib.request
 import numpy as np
@@ -21,7 +21,7 @@ bucket_url = 'https://objectstorage.us-chicago-1.oraclecloud.com/p/j8d1ZFSVLZnXb
 def handler(ctx, data: io.BytesIO=None):
     known_face_encodings = []
     known_face_names = []
-    
+
     print("Entering Python Hello World handler", flush=True)
     name = "World"
     try:
@@ -47,9 +47,9 @@ def handler(ctx, data: io.BytesIO=None):
             arr = np.asarray(bytearray(bucketImage.read()), dtype=np.uint8)
             img = cv2.imdecode(arr, -1)
             rgb_img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img_encoding = face_recognition.face_encodings(rgb_img2)[0]
-            known_face_encodings.append(img_encoding)
-            known_face_names.append(object['name'])
+            # img_encoding = face_recognition.face_encodings(rgb_img2)[0]
+            # known_face_encodings.append(img_encoding)
+            # known_face_names.append(object['name'])
         except Exception as e:
             return response.Response(
                 ctx, response_data=json.dumps(
