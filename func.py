@@ -11,6 +11,8 @@ import json
 from fdk import response
 
 import requests
+import urllib.request
+import numpy as np
 bucket_url = 'https://objectstorage.us-chicago-1.oraclecloud.com/p/j8d1ZFSVLZnXbJM07BW4ogJg-TEyu9uwb0or5vGoBPSRgDbyI2aj7lMynpBZ5rMw/n/axnwnsavbb9n/b/vision_service/o/'
 
 def handler(ctx, data: io.BytesIO=None):
@@ -35,6 +37,13 @@ def handler(ctx, data: io.BytesIO=None):
     for object in objects:
         try:
             name = bucket_url + object['name'].replace(' ', '%20')
+            bucketImage = urllib.request.urlopen(bucket_url + object['name'].replace(' ', '%20'))
+            arr = np.asarray(bytearray(bucketImage.read()), dtype=np.uint8)
+            # img = cv2.imdecode(arr, -1)
+            # rgb_img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # img_encoding = face_recognition.face_encodings(rgb_img2)[0]
+            # known_face_encodings.append(img_encoding)
+            # known_face_names.append(object['name'])
         except Exception as e:
             return response.Response(
                 ctx, response_data=json.dumps(
