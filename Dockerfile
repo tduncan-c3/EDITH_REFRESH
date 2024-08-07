@@ -1,4 +1,4 @@
-FROM fnproject/python:3.11-dev as build-stage
+FROM python:3.11-slim as build-stage
 WORKDIR /function
 ADD requirements.txt /function/
 
@@ -6,7 +6,9 @@ ADD requirements.txt /function/
 			    rm -fr ~/.cache/pip /tmp* requirements.txt func.yaml Dockerfile .venv &&\
 			    chmod -R o+r /python
 
-RUN yum update && yum install -y libgl1-mesa-glx libglib2.0-0
+RUN yum install -y \
+    mesa-libGL \
+    glib2
 
 ADD . /function/
 RUN rm -fr /function/.pip_cache
