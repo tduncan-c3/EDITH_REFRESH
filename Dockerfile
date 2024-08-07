@@ -7,13 +7,6 @@ ADD requirements.txt /function/
 			    chmod -R o+r /python
 ADD . /function/
 RUN rm -fr /function/.pip_cache
-FROM oraclelinux:7-slim as base
-RUN yum install -y \
-    mesa-libGL \
-    glib2 \
-    python3 \
-    python3-pip && \
-    yum clean all
 FROM fnproject/python:3.11
 WORKDIR /function
 COPY --from=build-stage /python /python
@@ -21,3 +14,10 @@ COPY --from=build-stage /function /function
 RUN chmod -R o+r /function
 ENV PYTHONPATH=/function:/python
 ENTRYPOINT ["/python/bin/fdk", "/function/func.py", "handler"]
+FROM oraclelinux:7-slim as base
+RUN yum install -y \
+    mesa-libGL \
+    glib2 \
+    python3 \
+    python3-pip && \
+    yum clean all
