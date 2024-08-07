@@ -122,29 +122,29 @@ def analyze():
 		# # response = jsonify({"face_ids": face_names, "face_locations": face_locations})
 		# # return response
 
-		# try:
-		# 	face_locations = face_recognition.face_locations(image_np)
-		# 	face_encodings = face_recognition.face_encodings(image_np, face_locations)
-		# except Exception as e:
-		# 	return jsonify({"FaceEncodingError": str(e)}), 400
+		try:
+			face_locations = face_recognition.face_locations(image_np)
+			face_encodings = face_recognition.face_encodings(image_np, face_locations)
+		except Exception as e:
+			return jsonify({"FaceEncodingError": str(e)}), 400
 
 		face_names = []
-		# for face_encoding in face_encodings:
-		# 	try:
-		# 		# See if the face is a match for the known face(s)
-		# 		matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-		# 		name = "Unknown"
-		# 	except Exception as e:
-		# 		return jsonify({"CompareFacesError": str(e)}), 400
+		for face_encoding in face_encodings:
+			try:
+				# See if the face is a match for the known face(s)
+				matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+				name = "Unknown"
+			except Exception as e:
+				return jsonify({"CompareFacesError": str(e)}), 400
 
-		# 	try:
-		# 		face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-		# 		best_match_index = np.argmin(face_distances)
-		# 		if matches[best_match_index]:
-		# 			name = known_face_names[best_match_index]
-		# 		face_names.append(name)
-		# 	except Exception as e:
-				# return jsonify({"FaceDistanceError": str(e)}), 400
+			try:
+				face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+				best_match_index = np.argmin(face_distances)
+				if matches[best_match_index]:
+					name = known_face_names[best_match_index]
+				face_names.append(name)
+			except Exception as e:
+				return jsonify({"FaceDistanceError": str(e)}), 400
 
 		face_locations = np.array(face_locations)
 		response = jsonify({"face_ids": face_names, "face_locations": face_locations.astype(int).tolist()})
