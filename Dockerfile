@@ -21,6 +21,10 @@ FROM fnproject/python:3.11
 WORKDIR /function
 COPY --from=build-stage /python /python
 COPY --from=build-stage /function /function
+
+# Add local bin to PATH to access fdk
+ENV PATH="/python/bin:/function:/home/tduncan/.local/bin:$PATH"
+
 RUN chmod -R o+r /function
 ENV PYTHONPATH=/function:/python
 ENTRYPOINT ["/python/bin/fdk", "/function/func.py", "handler"]
