@@ -1,3 +1,12 @@
+# Use an Oracle Linux base image
+FROM oraclelinux:7-slim
+
+# Update the package manager cache and install the necessary packages
+RUN yum install -y \
+    mesa-libGL \
+    glib2 && \
+    yum clean all
+
 FROM python:3.11-slim as build-stage
 WORKDIR /function
 ADD requirements.txt /function/
@@ -5,10 +14,6 @@ ADD requirements.txt /function/
 			RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt &&\
 			    rm -fr ~/.cache/pip /tmp* requirements.txt func.yaml Dockerfile .venv &&\
 			    chmod -R o+r /python
-
-RUN yum install -y \
-    mesa-libGL \
-    glib2
 
 ADD . /function/
 RUN rm -fr /function/.pip_cache
