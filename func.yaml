@@ -10,9 +10,4 @@ build:
   docker:
     target: build-stage
     commands:
-      - apt-get update && apt-get install -y \
-          libgl1-mesa-glx \
-          libglib2.0-0 \
-          cmake \
-          g++ \
-          make
+      - apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 cmake g++ make
