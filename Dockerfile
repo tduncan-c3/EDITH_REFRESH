@@ -1,4 +1,4 @@
-FROM fnproject/python:3.11-dev
+FROM oraclelinux:8-slim
 
 # Install required packages for building dlib using yum
 RUN yum install -y \
@@ -16,8 +16,9 @@ WORKDIR /function
 # Copy the current directory contents into the container at /function
 COPY . /function
 
-# Install Python dependencies if needed
-RUN pip install -r requirements.txt
+# Install Python and necessary Python packages
+RUN yum install -y python3 && \
+    pip3 install -r requirements.txt
 
 # Set the entrypoint to use the fdk
-ENTRYPOINT ["/python/bin/fdk", "/function/func.py", "handler"]
+ENTRYPOINT ["/usr/local/bin/fdk", "/function/func.py", "handler"]
