@@ -1,26 +1,23 @@
-FROM oraclelinux:8-slim
-
-# Install Python 3
-RUN yum install -y python3
+FROM fnproject/python:3.11-dev as build-stage
+WORKDIR /function
+ADD requirements.txt /function/
 
 # Install required packages for building dlib
-RUN yum install -y \
-    epel-release && \
-    yum install -y \
-    mesa-libGL \
-    glib2 \
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
     cmake \
-    gcc-c++ \
+    g++ \
     make
-
-# Set the working directory
+			RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt &&\
+			    rm -fr ~/.cache/pip /tmp* requirements.txt func.yaml Dockerfile .venv &&\
+			    chmod -R o+r /python
+ADD . /function/
+RUN rm -fr /function/.pip_cache
+FROM fnproject/python:3.11
 WORKDIR /function
-
-# Copy the current directory contents into the container at /function
-COPY . /function
-
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Set the entrypoint to use the fdk
-ENTRYPOINT ["/usr/local/bin/fdk", "/function/func.py", "handler"]
+COPY --from=build-stage /python /python
+COPY --from=build-stage /function /function
+RUN chmod -R o+r /function
+ENV PYTHONPATH=/function:/python
+ENTRYPOINT ["/python/bin/fdk", "/function/func.py", "handler"]
