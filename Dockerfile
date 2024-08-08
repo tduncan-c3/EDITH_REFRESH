@@ -3,12 +3,12 @@ WORKDIR /function
 ADD requirements.txt /function/
 
 # Install required packages for building dlib
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    cmake \
-    g++ \
-    make
+# RUN apt-get update && apt-get install -y \
+#     libgl1-mesa-glx \
+#     libglib2.0-0 \
+#     cmake \
+#     g++ \
+#     make
 			RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt &&\
 			    rm -fr ~/.cache/pip /tmp* requirements.txt func.yaml Dockerfile .venv &&\
 			    chmod -R o+r /python
