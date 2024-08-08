@@ -1,11 +1,13 @@
 FROM fnproject/python:3.11-dev
 
-# Install required packages for building dlib
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
+# Install required packages for building dlib using yum
+RUN yum install -y \
+    epel-release && \
+    yum install -y \
+    mesa-libGL \
+    glib2 \
     cmake \
-    g++ \
+    gcc-c++ \
     make
 
 # Set the working directory
