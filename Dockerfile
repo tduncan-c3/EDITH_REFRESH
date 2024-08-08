@@ -1,6 +1,9 @@
 FROM oraclelinux:8-slim
 
-# Install required packages for building dlib using yum
+# Install Python 3
+RUN yum install -y python3
+
+# Install required packages for building dlib
 RUN yum install -y \
     epel-release && \
     yum install -y \
@@ -16,9 +19,8 @@ WORKDIR /function
 # Copy the current directory contents into the container at /function
 COPY . /function
 
-# Install Python and necessary Python packages
-RUN yum install -y python3 && \
-    pip3 install -r requirements.txt
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Set the entrypoint to use the fdk
 ENTRYPOINT ["/usr/local/bin/fdk", "/function/func.py", "handler"]
